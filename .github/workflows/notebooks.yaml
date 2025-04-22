@@ -51,6 +51,11 @@ jobs:
       status_url: ${{ steps.pr.outputs.status_url }}
       run_url: ${{ steps.pr.outputs.run_url }}
     steps:
+      - name: "Harden Runner"
+        uses: step-security/harden-runner@c95a14d0e5bab51a9f56296a4eb0e416910cd350 # v2.10.3
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
       - name: Checkout
         if: ${{ inputs.pr }}
         id: checkout
@@ -79,7 +84,7 @@ jobs:
       - test_workflow_ready
     permissions:
       contents: read
-    uses: ibm-granite-community/utils/.github/workflows/test_notebook.yaml@main
+    uses: ibm-granite-community/utils/.github/workflows/test_notebook.yaml@harden-runner
     secrets:
       REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
       WATSONX_APIKEY: ${{ secrets.WATSONX_APIKEY }}
@@ -99,7 +104,7 @@ jobs:
       - test_workflow_ready
     permissions:
       contents: read
-    uses: ibm-granite-community/utils/.github/workflows/test_notebook.yaml@main
+    uses: ibm-granite-community/utils/.github/workflows/test_notebook.yaml@harden-runner
     secrets:
       REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
       WATSONX_APIKEY: ${{ secrets.WATSONX_APIKEY }}
@@ -124,6 +129,11 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !cancelled() && (needs.test_workflow_ready.result == 'success') }}
     steps:
+      - name: "Harden Runner"
+        uses: step-security/harden-runner@c95a14d0e5bab51a9f56296a4eb0e416910cd350 # v2.10.3
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
       - name: Pull Request dispatch
         if: ${{ inputs.pr }}
         run: |
